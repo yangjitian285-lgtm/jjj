@@ -1,5 +1,5 @@
 // App shell cache so CRATE opens with no network. Music lives in IndexedDB, not here.
-const VERSION = 'crate-v1';
+const VERSION = 'crate-v2';
 const SHELL = ['./', 'index.html', 'manifest.webmanifest', 'css/app.css', 'js/app.js', 'js/db.js', 'js/id3.js', 'js/library.js', 'js/player.js', 'js/icon.js', 'icons/icon-180.png', 'icons/icon-192.png', 'icons/icon-512.png'];
 
 self.addEventListener('install', e => {

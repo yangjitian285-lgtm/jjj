@@ -6,6 +6,27 @@ const audio = new Audio();
 audio.preload = 'auto';
 audio.setAttribute('playsinline', '');
 
+const SILENT = 'data:audio/mpeg;base64,SUQzBAAAAAAAI1RTU0UAAAAPAAADTGF2ZjYwLjE2LjEwMAAAAAAAAAAAAAAA//NwwAAAAAAAAAAAAEluZm8AAAAPAAAACgAABMsAOzs7Ozs7Ozs7UVFRUVFRUVFRUWdnZ2dnZ2dnZ2d9fX19fX19fX19kpKSkpKSkpKSkqioqKioqKioqKi+vr6+vr6+vr6+1NTU1NTU1NTU1Orq6urq6urq6ur/////////////AAAAAExhdmM2MC4zMQAAAAAAAAAAAAAAACQDBgAAAAAAAATL+A9CeQAAAAAAAAAAAAAAAAD/80DEAAAAA0gAAAAATEFNRTMuMTAwVVVVVVVVVVVVVUxBTUUzLjEwMFVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVf/zQsRbAAADSAAAAABVVVVVVVVVVVVVVVVVVVVVVVVVVUxBTUUzLjEwMFVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVf/zQMSkAAADSAAAAABVVVVVVVVVVVVVVVVVVVVVVVVVTEFNRTMuMTAwVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV//NCxKMAAANIAAAAAFVVVVVVVVVVVVVVVVVVVVVVVVVVTEFNRTMuMTAwVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV//NAxKQAAANIAAAAAFVVVVVVVVVVVVVVVVVVVVVVVVVMQU1FMy4xMDBVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVX/80LEowAAA0gAAAAAVVVVVVVVVVVVVVVVVVVVVVVVVVVMQU1FMy4xMDBVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVX/80DEpAAAA0gAAAAAVVVVVVVVVVVVVVVVVVVVVVVVVUxBTUUzLjEwMFVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVf/zQsSjAAADSAAAAABVVVVVVVVVVVVVVVVVVVVVVVVVVUxBTUUzLjEwMFVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVf/zQMSkAAADSAAAAABVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV//NCxKMAAANIAAAAAFVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV';
+let unlocked = false;
+
+// iOS only lets an <audio> element start sound inside a tap. Our tracks load from IndexedDB
+// asynchronously, which loses that permission, so we "unlock" the element on the first tap.
+export function unlock() {
+  if (unlocked) return;
+  unlocked = true;
+  const real = audio.src && audio.src !== SILENT ? audio.src : null;
+  if (real) {
+    audio.muted = true;
+    const p = audio.play();
+    if (p) p.then(() => { audio.pause(); audio.muted = false; }).catch(() => { audio.muted = false; unlocked = false; });
+    else audio.muted = false;
+  } else {
+    audio.src = SILENT;
+    const p = audio.play();
+    if (p) p.then(() => { if (audio.src === SILENT) audio.pause(); }).catch(() => { unlocked = false; });
+  }
+}
+
 const listeners = new Set();
 export const state = { queue: [], index: -1, playing: false, shuffle: false, repeat: 'off', order: [] };
 let currentUrl = null;
@@ -34,7 +55,8 @@ async function load(index, autoplay = true, startAt = 0) {
   }
   updateMediaSession(t);
   if (autoplay) {
-    try { await audio.play(); } catch (e) { console.warn('play blocked', e); }
+    try { await audio.play(); }
+    catch (e) { console.warn('play blocked', e); listeners.forEach(fn => fn(state, 'error', e)); }
     markPlayed(id);
   }
   emit();
@@ -55,7 +77,7 @@ function shuffleQueue(keepIndex) {
 }
 
 export function toggle() {
-  if (!audio.src) { if (state.queue.length) load(Math.max(0, state.index)); return; }
+  if (!audio.src || audio.src === SILENT) { if (state.queue.length) load(Math.max(0, state.index)); return; }
   if (audio.paused) audio.play().catch(() => {}); else audio.pause();
 }
 
@@ -128,9 +150,9 @@ if ('mediaSession' in navigator) {
   set('seekto', d => { if (d.fastSeek && audio.fastSeek) audio.fastSeek(d.seekTime); else seek(d.seekTime); updatePosition(); });
 }
 
-audio.addEventListener('play', () => { state.playing = true; if ('mediaSession' in navigator) navigator.mediaSession.playbackState = 'playing'; emit(); });
-audio.addEventListener('pause', () => { state.playing = false; if ('mediaSession' in navigator) navigator.mediaSession.playbackState = 'paused'; emit(); persist(); });
-audio.addEventListener('ended', () => next(true));
+audio.addEventListener('play', () => { if (audio.src === SILENT) return; state.playing = true; if ('mediaSession' in navigator) navigator.mediaSession.playbackState = 'playing'; emit(); });
+audio.addEventListener('pause', () => { if (audio.src === SILENT) return; state.playing = false; if ('mediaSession' in navigator) navigator.mediaSession.playbackState = 'paused'; emit(); persist(); });
+audio.addEventListener('ended', () => { if (audio.src !== SILENT) next(true); });
 audio.addEventListener('loadedmetadata', updatePosition);
 audio.addEventListener('timeupdate', () => {
   listeners.forEach(fn => fn(state, 'time'));

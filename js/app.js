@@ -406,8 +406,9 @@ function updateTime() {
 function openNP() { renderNP(); $np.classList.add('open'); }
 function closeNP() { $np.classList.remove('open'); }
 let lastId = null;
-P.onChange((s, kind) => {
+P.onChange((s, kind, err) => {
   if (kind === 'time') { updateTime(); return; }
+  if (kind === 'error') { toast(`再生できませんでした（${err && err.name || 'error'}）。もう一度曲をタップしてください`, 5000); return; }
   renderMini();
   if ($np.classList.contains('open')) renderNP();
   const cur = P.current();
@@ -420,6 +421,9 @@ P.onChange((s, kind) => {
 let y0 = null;
 $np.addEventListener('touchstart', e => { if (!e.target.closest('[data-scrub]')) y0 = e.touches[0].clientY; }, { passive: true });
 $np.addEventListener('touchend', e => { if (y0 !== null && e.changedTouches[0].clientY - y0 > 90) closeNP(); y0 = null; }, { passive: true });
+
+// unlock audio on the very first tap (iOS)
+['touchend', 'click'].forEach(ev => document.addEventListener(ev, P.unlock, { capture: true }));
 
 // ---------- boot ----------
 (async function boot() {
