@@ -112,3 +112,134 @@ nav.tabs a.on{color:var(--accent);font-weight:600}
 .progress{position:fixed;inset:0;z-index:65;background:rgba(14,14,12,.94);display:flex;flex-direction:column;justify-content:center;padding:32px;gap:14px}
 .progress .bar{height:4px}
 .mini[hidden]{display:none}
+.field{display:flex;flex-direction:column;gap:6px}
+
+/* =====================================================================
+   ETERNAL — one cohesive deep-space theme (violet / magenta / starlight)
+   Original artwork; mood inspired by space-age hip-hop visuals.
+   ===================================================================== */
+:root{
+  --ink:#0A0612; --paper:#F3EEFF; --mute:#9C90B8; --line:#1E1630; --line2:#3A2D57;
+  --accent:#FF3DBB; --lav:#B9A3FF; --deep:#140B26;
+  --halo:0 0 24px rgba(255,61,187,.35);
+}
+html,body{background:var(--ink)}
+body{background:
+  radial-gradient(90% 55% at 85% -5%,rgba(255,61,187,.22),transparent 60%),
+  radial-gradient(80% 60% at 0% 35%,rgba(110,60,220,.22),transparent 65%),
+  radial-gradient(100% 70% at 50% 110%,rgba(60,20,110,.55),transparent 70%),
+  var(--ink);background-attachment:fixed}
+/* star field: two layers, slow parallax drift */
+body::before,body::after{content:"";position:fixed;inset:-40%;pointer-events:none;z-index:-1}
+body::before{background-image:
+  radial-gradient(1px 1px at 7% 12%,rgba(255,255,255,.9),transparent),radial-gradient(1px 1px at 23% 47%,rgba(255,255,255,.7),transparent),
+  radial-gradient(1px 1px at 41% 19%,rgba(255,255,255,.8),transparent),radial-gradient(1px 1px at 58% 66%,rgba(255,255,255,.6),transparent),
+  radial-gradient(1px 1px at 76% 33%,rgba(255,255,255,.9),transparent),radial-gradient(1px 1px at 89% 81%,rgba(255,255,255,.7),transparent),
+  radial-gradient(1px 1px at 14% 88%,rgba(255,255,255,.6),transparent),radial-gradient(1px 1px at 66% 4%,rgba(255,255,255,.8),transparent);
+  background-size:180px 180px;animation:drift 160s linear infinite}
+body::after{background-image:
+  radial-gradient(1.6px 1.6px at 18% 28%,#fff,transparent),radial-gradient(1.4px 1.4px at 62% 52%,#FFD6F1,transparent),
+  radial-gradient(1.6px 1.6px at 84% 14%,#fff,transparent),radial-gradient(1.2px 1.2px at 36% 78%,#E3D9FF,transparent);
+  background-size:340px 340px;animation:drift 90s linear infinite,twinkle 4s ease-in-out infinite alternate}
+@keyframes drift{to{transform:translate(-180px,-90px)}}
+@keyframes twinkle{from{opacity:.45}to{opacity:1}}
+.grain{opacity:.05}
+
+/* type: clean starlight white, soft magenta halo, faint chromatic edge */
+h1.big,.np h1{color:var(--paper);text-shadow:-1px 0 rgba(122,92,255,.55),1px 0 rgba(255,61,187,.55),var(--halo)}
+h1.big .dot{color:var(--accent);text-shadow:var(--halo)}
+h2.sec{color:var(--paper);letter-spacing:.06em}
+.eyebrow{color:var(--mute)}
+.rec .t{color:var(--paper)}
+.rec .a,.list .main span,.list .side{color:var(--mute)}
+
+/* controls */
+.chip{border-color:var(--line2);background:rgba(20,11,38,.55);color:#DCD3F2}
+.chip.on{background:var(--paper);border-color:var(--paper);color:var(--deep);box-shadow:0 0 18px rgba(185,163,255,.35)}
+.icon-btn.ring{border-color:var(--line2);color:var(--paper);background:rgba(20,11,38,.4)}
+.btn{border-color:var(--line2);background:rgba(20,11,38,.55);color:var(--paper)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:#fff;box-shadow:0 8px 28px rgba(255,61,187,.35)}
+.search{background:rgba(20,11,38,.7);border-color:var(--line2);color:var(--paper)}
+.search:focus{outline:1px solid var(--lav)}
+.card{border-color:var(--line2);background:rgba(20,11,38,.55);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px)}
+.bar{background:var(--line)}.bar i{background:linear-gradient(90deg,var(--lav),var(--accent))}
+.empty{border-color:var(--line2)}
+
+/* artwork: hairline frame + soft depth, no gimmicks */
+.art{box-shadow:0 0 0 1px rgba(185,163,255,.18),0 14px 30px rgba(5,0,15,.65)}
+.art .ph{color:var(--lav)}
+.rec{transition:transform .2s}.rec:active{transform:scale(.97)}
+
+/* lists */
+.list .item{border-top-color:var(--line)}.list .item:last-child{border-bottom-color:var(--line)}
+.list .num{color:var(--lav)}
+.tracks .num{color:#6F6488}
+.tracks .item.now .num,.tracks .item.now b{color:var(--accent)}
+
+/* album hero vinyl */
+.album-hero .vinyl{background:radial-gradient(circle,var(--accent) 0 12.5%,#0D0A14 13% 100%);box-shadow:inset 0 0 0 1px #2A2140}
+.album-hero .vinyl::before{content:"";position:absolute;inset:0;border-radius:50%;background:conic-gradient(from 30deg,transparent 0 50deg,rgba(255,255,255,.08) 65deg,transparent 80deg 230deg,rgba(255,255,255,.06) 245deg,transparent 260deg)}
+
+/* mini player + tabs: frosted violet glass */
+.mini{background:rgba(24,14,44,.78);-webkit-backdrop-filter:blur(20px) saturate(1.3);backdrop-filter:blur(20px) saturate(1.3);
+  color:var(--paper);border:1px solid rgba(185,163,255,.22);border-radius:14px;box-shadow:0 14px 36px rgba(5,0,15,.6);overflow:hidden}
+.mini .meta span{color:var(--mute)}
+.mini .prog{background:linear-gradient(90deg,var(--lav),var(--accent))}
+.mini .thumb .art{border-radius:6px}
+nav.tabs{background:rgba(10,6,18,.86);-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);border-top-color:var(--line)}
+nav.tabs a{color:#7D7298}nav.tabs a.on{color:var(--paper);text-shadow:var(--halo)}
+
+/* now playing: deep cosmos */
+.np{background:
+  radial-gradient(70% 45% at 85% 10%,rgba(255,61,187,.28),transparent 65%),
+  radial-gradient(80% 55% at 10% 60%,rgba(110,60,220,.30),transparent 70%),
+  linear-gradient(180deg,color-mix(in srgb,var(--np-bg) 35%,#1A0B30),#07040D 92%)}
+.np .stage .disc{background:
+  conic-gradient(from 0deg,transparent 0 35deg,rgba(255,255,255,.10) 50deg,transparent 65deg 215deg,rgba(255,255,255,.08) 230deg,transparent 245deg),
+  repeating-radial-gradient(circle,#0B0911 0 2px,#13101B 2px 3px);box-shadow:0 20px 50px rgba(5,0,15,.7)}
+.np .stage .label{background:var(--accent);color:#fff}
+.np .stage .art{box-shadow:0 0 0 1px rgba(185,163,255,.22),0 24px 50px rgba(5,0,15,.75)}
+.np .who{color:#E6DCFF}
+.np .scrub .rail{background:rgba(185,163,255,.18)}
+.np .scrub .fill{background:linear-gradient(90deg,var(--lav),var(--accent))}
+.np .scrub .knob{background:#fff;box-shadow:0 0 12px rgba(255,61,187,.6)}
+.np .play{background:#fff;color:var(--deep);box-shadow:0 0 0 8px rgba(255,255,255,.06),0 0 40px rgba(255,61,187,.45)}
+.np .ctl.on{color:var(--accent)}
+.np .next{border-top-color:rgba(185,163,255,.16)}
+
+.sheet{background:#120A22;border-top:1px solid var(--line2);border-radius:18px 18px 0 0}
+.toast{background:var(--paper);color:var(--deep);border-radius:10px;font-weight:600}
+.progress{background:rgba(10,6,18,.94)}
+@media (prefers-reduced-motion:reduce){body::before,body::after{animation:none}}
+
+/* =====================================================================
+   UFO + PLANET on the now-playing screen (original pixel-style art)
+   ===================================================================== */
+.np .space{position:absolute;inset:0;pointer-events:none;z-index:0;overflow:hidden}
+.np .space.front{z-index:3}
+.np > *:not(.space){position:relative;z-index:1}
+.np .planet{position:absolute;right:-64px;bottom:calc(var(--safe-bottom) + 46px);width:190px;height:190px;opacity:.95;
+  filter:drop-shadow(0 0 26px rgba(255,61,187,.25));animation:planet 30s ease-in-out infinite alternate}
+@keyframes planet{from{transform:translateY(0) rotate(-6deg)}to{transform:translateY(14px) rotate(6deg)}}
+.np .ufo-path{position:absolute;left:0;top:calc(var(--safe-top) + 74%);width:100%;height:120px;animation:fly 22s ease-in-out infinite}
+.np .ufo{position:absolute;left:0;top:0;width:150px;animation:bob 2.6s ease-in-out infinite;filter:drop-shadow(0 6px 10px rgba(0,0,0,.55)) drop-shadow(0 0 16px rgba(185,163,255,.35))}
+.np .ufo svg{display:block;width:150px;height:auto}
+@keyframes fly{
+  0%{transform:translate(-180px,30px) scale(.9)}
+  22%{transform:translate(18vw,0px) scale(1.1)}
+  40%{transform:translate(42vw,40px) scale(1)}
+  58%{transform:translate(10vw,10px) scale(1.15)}
+  78%{transform:translate(35vw,-10px) scale(.95)}
+  100%{transform:translate(calc(100vw + 180px),20px) scale(.8)}}
+@keyframes bob{0%,100%{transform:translateY(0) rotate(-4deg)}50%{transform:translateY(-8px) rotate(4deg)}}
+.np .ufo .ufo-l{animation:blink 1.2s steps(2) infinite}
+.np .ufo .ufo-l:nth-child(odd){animation-delay:.6s}
+@keyframes blink{50%{opacity:.3}}
+.np .ufo .ufo-l:nth-child(3n){animation-delay:.3s}
+.np .ufo .beam{position:absolute;left:52px;top:62px;width:46px;height:120px;opacity:0;transform-origin:top center;
+  background:linear-gradient(180deg,rgba(255,214,241,.6),rgba(185,163,255,.15) 70%,transparent);
+  clip-path:polygon(30% 0,70% 0,100% 100%,0 100%);transition:opacity .4s}
+.np.playing .ufo .beam{animation:beam 3.2s ease-in-out infinite}
+@keyframes beam{0%,100%{opacity:.15}50%{opacity:.7}}
+
+@media (prefers-reduced-motion:reduce){.np .ufo-path,.np .ufo,.np .planet,.np .ufo .beam,.np .ufo .ufo-l{animation:none}}
